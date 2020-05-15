@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<h1>vue2.x 版本使用Object.defineProperty实现响应式</h1>
+	
+		
+		<script>
+			/*
+				npm install http-server -g
+				cd ./
+				http-server -p 8001
+				
+				访问：
+					http://localhost:8001
+			*/	
+			
+			const data = {
+				
+			}
+			
+			//get set 借助外层变量交互的 
+			let name='zhangsan'
+			
+			Object.defineProperty(data,"name",{
+				get:function(){
+					console.log('get')
+					return name
+				},
+				set:function(val){
+					console.log('set',val)
+					name=val
+				}
+			})
+			
+			console.log(data.name)
+			data.name='lisi'
+			
+			
+			
+			
+		</script>		
+	</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<h1>模拟Vue 使用 Object.defineProperty 实现响应式</h1>
+		<script>
+			const data = {
+				name:'zhangsan',
+				age:21,
+				
+				info:{
+					address:{
+						city:'北京',
+						contry:'中国'
+						
+					}
+				},
+				num:[1,2,3]
+			}	
+			
+			//模拟vue 的跟新视图的函数
+			const updateView = function(){
+				console.log('vue跟新视图')
+			}
+			
+			//扩展新的代码能够让数组改变的时候调用updateView
+			const oldArrayProperty= Array.prototype ;//引用赋值
+			//基于原型创建新的对象 ，新对象的原型指向于oldArrayProperty ，在新对象上扩展方法不会影响原型
+			const arrProto = Object.create(oldArrayProperty);
+
+			['pop','push','shift','unshift','splice'].forEach(methodName => {
+				arrProto[methodName]= function(){
+					
+					//调用原型中的方法
+					oldArrayProperty[methodName].call(this, ...arguments);
+					//oldArrayProperty[methodName].apply(this,arguments)
+					
+					//跟新视图
+					updateView()
+					
+				}
+			})
+				
+			
+			
+			//具体监听某个属性的
+			const defineReactive = function (target,key,value){
+				//深度监听
+				obServer(value)	 
+				
+				Object.defineProperty(target,key,{
+					get(){
+						console.log('get')	
+						return value
+					},
+					set(newValue){
+						console.log('set')
+						//深度监听
+						obServer(newValue)	 
+							
+						if(newValue !== value){
+							value=newValue
+							//通知vue data数据发生改变了 
+							updateView()
+						}		
+					}
+				})
+			}	
+			
+			//监听入口
+			const obServer =function(target){
+				if(typeof target !== 'object' || target === null){
+					return target
+				}	
+				if(Array.isArray(target)){
+					target.__proto__ = arrProto
+				}
+				
+				//遍历对象 数组
+				for(let key in target){
+					defineReactive(target,key,target[key])
+				}
+			}
+			
+			obServer(data)
+			
+
+			
+			
+		</script>
+		
+	</body>
+</html>
