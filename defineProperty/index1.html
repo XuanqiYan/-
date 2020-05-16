@@ -12,11 +12,7 @@
 				age:21,
 				
 				info:{
-					address:{
-						city:'北京',
-						contry:'中国'
-						
-					}
+					address:'北京'
 				},
 				num:[1,2,3]
 			}	
@@ -40,7 +36,6 @@
 					
 					//跟新视图
 					updateView()
-					
 				}
 			})
 				
@@ -76,6 +71,7 @@
 					return target
 				}	
 				if(Array.isArray(target)){
+					//让监听的数组能够调用arrProto的特性
 					target.__proto__ = arrProto
 				}
 				
@@ -86,6 +82,10 @@
 			}
 			
 			obServer(data)
+			//data.age={num:22}
+			//data.age.num=23
+			//data.xx='xxx'
+			//delete data.name
 			
 
 			
