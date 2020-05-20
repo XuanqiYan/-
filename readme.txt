@@ -156,13 +156,48 @@
 				
 			}	
 		
-		vue是如何编译的？ （使用vue-template-compiler 插件来完成模板编译的）
+		vue是如何编译的？ （使用 vue-template-compiler 插件来完成模板编译的）
 		总结：
 			模板编译就是将模板转化成render函数
 			render函数执行返回虚拟dom （vnode）
 			vnode在 patch(elm,vnode) 函数渲染成真实的dom
 			注意：只有在开发环境中才能执行模板编译（webpack环境 或者是 vue-cli 脚手架环境 ）
-			
+	
+回顾：
+	1.响应式： 监听data属性的变化（getter 和 setter）
+	2.模板编译：使用vue-template-complier 编译成render函数	，执行render生成vnode
+	3.vdom: patch(elm,vnode) 和 patch(vnode,newVnode)
+	
+	面试题：组件初次渲染的执行流程
+		1: 模板编译render函数 （在开发环境下,只编译一次）
+		2: 执行render函数，会触发响应式，监听data中属性的getter 和 setter
+		3. 将render产生的虚拟dom (vnode) 使用patch(elm,vnode) 生成真实dom ，并挂载浏览器
+			eg:
+				<template>
+					<p>{{message}}</p>
+				<template>
+				
+				<script>
+					export default{
+						data(){
+							return {
+								message:'xxx' //触发get
+								city:'北京' //不会触发get ,因为模板中没有用到city,如果改变city 也不会触发setter ，不会触发视图更新，除非模板中使用city属性
+							}
+						}
+						
+					}
+				</script>
+		
+	面试题：组件跟新数据重新渲染视图的流程
+		1: 修改data中的属性 触发setter (此前在getter中已经被监听的属性)
+		2: 重新执行render函数（不需要重新编译）会产生新的虚拟dom (newVnode)
+		3: patch(vnode,newVnode),内部根据diff算法比较两个虚拟dom的最小差异，根据最小差异跟新视图
+		
+		
+	面试题：异步渲染 提升性能
+	
+		
 
 			
 		 

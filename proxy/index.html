@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<p>vue3.0 proxy 响应式原理</p>
+		<script>
+			const data = {
+				name:'zhangsan',
+				age:21
+			}
+			console.log('cc')
+			/*
+				new Proxy产生一个代理对象
+				以后对data对象的访问，可以直接使用proxyData代理对象
+				proxyData.name 触发 get(原始的data,属性名,代理对象)
+				proxyData.age=22 触发set (原始的data,属性名,值,代理对象)	
+			*/
+			const proxyData = new Proxy(data,{
+				get(target,key,receiver){
+					console.log('get',key)	
+					return Reflect.get(target,key,receiver)
+				},
+				set(target,key,val,receiver){
+					console.log('set',key,val)
+					const result = Reflect.set(target,key,val,receiver)
+					console.log(result)
+					return result 
+				}
+
+			
+			})
+			
+		</script>
+	</body>
+</html>

@@ -16,7 +16,6 @@ function render (){
 		with(this){
 			//vue 内部基于h函数 封装的_c  和 _v ,调用_c 和 _v的时候实际在调用h函数
 			return _c('p',[_v(_s(message))])
-			
 		} 
 }
 如果执行render函数返回 vnode
