@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<p>模拟vue3.0 proxy 响应式</p>
+		<script>
+			//监听入口
+			const reactive = (target={})=>{
+				//不是数组或者对象直接返回 
+				if(typeof target !== 'object' || target== null){
+					return target
+				}	
+				//代理设置
+				const proxyConf = {
+					// 访问属性
+					get(target,key,receiver){
+						//只处理本身（非原型） 的属性
+						const ownKeys = Reflect.ownKeys(target)	
+						if(ownKeys.includes(key)){
+							console.log('get@@@@',key)	
+						}
+						const res =  Reflect.get(target,key,receiver)
+						return reactive(res)
+					},
+					// 设置已存在的属性 / 新增属性
+					set(target,key,val,receiver){
+						//重复的属性修改不监听
+						if(val === target[key]){
+							return true
+						}
+						console.log('set',key,val)
+						//有些属性私有 不可以修改的
+						const result = Reflect.set(target,key,val,receiver)
+						
+						return result 
+					},
+					deleteProperty(target,key){
+						console.log('delete',key)
+						return Reflect.deleteProperty(target,key)
+					}
+				}
+				return new Proxy(target,proxyConf)
+				
+				
+			}
+			//测试数据	
+			const data = {
+				name:'zhangsan',
+				age:21,
+				info:{
+					city:'北京',
+					a:{
+						b:{
+							c:{
+								e:100
+							}
+						}
+						
+					}
+				}
+				
+			}
+			//const data = [1,2]
+			
+			const proxyData = reactive(data)
+			//proxy 深度监听也需要递归，但是不是一次性递归到底，只有访问属性的时候才出发递归下一层，性能非常好的
+		</script>
+		
+	</body>
+</html>

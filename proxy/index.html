@@ -5,32 +5,45 @@
 		<title></title>
 	</head>
 	<body>
-		<p>vue3.0 proxy 响应式原理</p>
+		<p> proxy 语法</p>
 		<script>
-			const data = {
-				name:'zhangsan',
-				age:21
-			}
-			console.log('cc')
+			// const data = {
+			// 	name:'zhangsan',
+			// 	age:21
+			// }
+			const data = [1,2,3]
 			/*
-				new Proxy产生一个代理对象
+				new Proxy产生一个代理的监听对象
 				以后对data对象的访问，可以直接使用proxyData代理对象
 				proxyData.name 触发 get(原始的data,属性名,代理对象)
 				proxyData.age=22 触发set (原始的data,属性名,值,代理对象)	
 			*/
 			const proxyData = new Proxy(data,{
+				// 访问属性
 				get(target,key,receiver){
-					console.log('get',key)	
+					//只处理本身（非原型） 的属性
+					const ownKeys = Reflect.ownKeys(target)	
+					if(ownKeys.includes(key)){
+						console.log('get',key)	
+					}
 					return Reflect.get(target,key,receiver)
 				},
+				// 设置已存在的属性 / 新增属性
 				set(target,key,val,receiver){
+					//重复的属性修改不监听
+					if(val === target[key]){
+						return true
+					}
 					console.log('set',key,val)
+					//有些属性私有 不可以修改的
 					const result = Reflect.set(target,key,val,receiver)
-					console.log(result)
+					
 					return result 
+				},
+				deleteProperty(target,key){
+					console.log('delete',key)
+					return Reflect.deleteProperty(target,key)
 				}
-
-			
 			})
 			
 		</script>
